@@ -18,6 +18,8 @@ namespace model {
 
         double getDistanceTo(double x, double y) const;
         double getDistanceTo(const Unit& unit) const;
+        double getSquaredDistanceTo(double x, double y) const;
+        double getSquaredDistanceTo(const Unit& unit) const;
 
         virtual ~Unit();
     };
