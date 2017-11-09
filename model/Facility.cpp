@@ -3,8 +3,8 @@
 using namespace model;
 
 Facility::Facility()
-    : id(-1), type(_FACILITY_UNKNOWN_), ownerPlayerId(-1), left(-1.0), top(-1.0), capturePoints(-1.0),
-    vehicleType(_VEHICLE_UNKNOWN_), productionProgress(-1) { }
+    : id(-1), type(FacilityType::_UNKNOWN_), ownerPlayerId(-1), left(-1.0), top(-1.0), capturePoints(-1.0),
+    vehicleType(VehicleType::_UNKNOWN_), productionProgress(-1) { }
 
 Facility::Facility(long long id, FacilityType type, long long ownerPlayerId, double left, double top,
     double capturePoints, VehicleType vehicleType, int productionProgress)

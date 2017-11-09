@@ -4,11 +4,11 @@
 #define _FACILITY_TYPE_H_
 
 namespace model {
-    enum FacilityType {
-        _FACILITY_UNKNOWN_ = -1,
-        FACILITY_CONTROL_CENTER = 0,
-        FACILITY_VEHICLE_FACTORY = 1,
-        _FACILITY_COUNT_ = 2
+    enum class FacilityType {
+        _UNKNOWN_ = -1,
+        CONTROL_CENTER = 0,
+        VEHICLE_FACTORY = 1,
+        _COUNT_ = 2
     };
 }
 

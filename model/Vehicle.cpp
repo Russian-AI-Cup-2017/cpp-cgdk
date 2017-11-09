@@ -8,7 +8,7 @@ Vehicle::Vehicle()
     : CircularUnit(0, 0.0, 0.0, 0.0), playerId(-1), durability(-1), maxDurability(-1), maxSpeed(-1.0),
     visionRange(-1.0), squaredVisionRange(-1.0), groundAttackRange(-1.0), squaredGroundAttackRange(-1.0),
     aerialAttackRange(-1.0), squaredAerialAttackRange(-1.0), groundDamage(-1), aerialDamage(-1), groundDefence(-1),
-    aerialDefence(-1), attackCooldownTicks(-1), remainingAttackCooldownTicks(-1), type(_VEHICLE_UNKNOWN_),
+    aerialDefence(-1), attackCooldownTicks(-1), remainingAttackCooldownTicks(-1), type(VehicleType::_UNKNOWN_),
     aerial(false), selected(false), groups(vector<int>()) { }
 
 Vehicle::Vehicle(long long id, double x, double y, double radius, long long playerId, int durability, int maxDurability,
