@@ -18,6 +18,7 @@ namespace model {
         double x;
         double y;
         double angle;
+        double factor;
         double maxSpeed;
         double maxAngularSpeed;
         VehicleType vehicleType;
@@ -43,6 +44,8 @@ namespace model {
         void setY(const double y);
         double getAngle() const;
         void setAngle(const double angle);
+        double getFactor() const;
+        void setFactor(const double factor);
         double getMaxSpeed() const;
         void setMaxSpeed(const double maxSpeed);
         double getMaxAngularSpeed() const;

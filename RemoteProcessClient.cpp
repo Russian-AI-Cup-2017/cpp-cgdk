@@ -31,7 +31,7 @@ void RemoteProcessClient::writeTokenMessage(const string& token) {
 
 void RemoteProcessClient::writeProtocolVersionMessage() {
     writeEnum<MessageType>(PROTOCOL_VERSION);
-    writeInt(1);
+    writeInt(2);
 }
 
 void RemoteProcessClient::readTeamSizeMessage() {
@@ -382,6 +382,7 @@ void RemoteProcessClient::writeMove(const Move& move) {
     writeDouble(move.getX());
     writeDouble(move.getY());
     writeDouble(move.getAngle());
+    writeDouble(move.getFactor());
     writeDouble(move.getMaxSpeed());
     writeDouble(move.getMaxAngularSpeed());
     writeEnum(move.getVehicleType());

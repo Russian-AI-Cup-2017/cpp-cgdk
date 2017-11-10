@@ -4,7 +4,7 @@ using namespace model;
 
 Move::Move()
     : action(ActionType::_UNKNOWN_), group(0), left(0.0), top(0.0), right(0.0), bottom(0.0), x(0.0), y(0.0), angle(0.0),
-    maxSpeed(0.0), maxAngularSpeed(0.0), vehicleType(VehicleType::_UNKNOWN_), facilityId(-1) { }
+    factor(0.0), maxSpeed(0.0), maxAngularSpeed(0.0), vehicleType(VehicleType::_UNKNOWN_), facilityId(-1) { }
 
 ActionType Move::getAction() const {
     return action;
@@ -76,6 +76,14 @@ double Move::getAngle() const {
 
 void Move::setAngle(const double angle) {
     this->angle = angle;
+}
+
+double Move::getFactor() const {
+    return factor;
+}
+
+void Move::setFactor(const double factor) {
+    this->factor = factor;
 }
 
 double Move::getMaxSpeed() const {
