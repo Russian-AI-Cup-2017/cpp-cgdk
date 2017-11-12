@@ -17,7 +17,8 @@ namespace model {
         ROTATE = 8,
         SCALE = 9,
         SETUP_VEHICLE_PRODUCTION = 10,
-        _COUNT_ = 11
+        TACTICAL_NUCLEAR_STRIKE = 11,
+        _COUNT_ = 12
     };
 }
 

@@ -31,7 +31,7 @@ void RemoteProcessClient::writeTokenMessage(const string& token) {
 
 void RemoteProcessClient::writeProtocolVersionMessage() {
     writeEnum<MessageType>(PROTOCOL_VERSION);
-    writeInt(2);
+    writeInt(3);
 }
 
 void RemoteProcessClient::readTeamSizeMessage() {
@@ -229,6 +229,11 @@ Game RemoteProcessClient::readGame() {
     double facilityCapturePointsPerVehiclePerTick = readDouble();
     double facilityWidth = readDouble();
     double facilityHeight = readDouble();
+    int baseTacticalNuclearStrikeCooldown = readInt();
+    int tacticalNuclearStrikeCooldownDecreasePerControlCenter = readInt();
+    double maxTacticalNuclearStrikeDamage = readDouble();
+    double tacticalNuclearStrikeRadius = readDouble();
+    int tacticalNuclearStrikeDelay = readInt();
 
     return Game(randomSeed, tickCount, worldWidth, worldHeight, fogOfWarEnabled, victoryScore, facilityCaptureScore,
         vehicleEliminationScore, actionDetectionInterval, baseActionCount, additionalActionCountPerControlCenter,
@@ -248,7 +253,9 @@ Game RemoteProcessClient::readGame() {
         helicopterProductionCost, fighterDurability, fighterSpeed, fighterVisionRange, fighterGroundAttackRange,
         fighterAerialAttackRange, fighterGroundDamage, fighterAerialDamage, fighterGroundDefence, fighterAerialDefence,
         fighterAttackCooldownTicks, fighterProductionCost, maxFacilityCapturePoints,
-        facilityCapturePointsPerVehiclePerTick, facilityWidth, facilityHeight);
+        facilityCapturePointsPerVehiclePerTick, facilityWidth, facilityHeight, baseTacticalNuclearStrikeCooldown,
+        tacticalNuclearStrikeCooldownDecreasePerControlCenter, maxTacticalNuclearStrikeDamage,
+        tacticalNuclearStrikeRadius, tacticalNuclearStrikeDelay);
 }
 
 void RemoteProcessClient::writeGame(const Game& game) {
@@ -343,6 +350,11 @@ void RemoteProcessClient::writeGame(const Game& game) {
     writeDouble(game.getFacilityCapturePointsPerVehiclePerTick());
     writeDouble(game.getFacilityWidth());
     writeDouble(game.getFacilityHeight());
+    writeInt(game.getBaseTacticalNuclearStrikeCooldown());
+    writeInt(game.getTacticalNuclearStrikeCooldownDecreasePerControlCenter());
+    writeDouble(game.getMaxTacticalNuclearStrikeDamage());
+    writeDouble(game.getTacticalNuclearStrikeRadius());
+    writeInt(game.getTacticalNuclearStrikeDelay());
 }
 
 vector<Game> RemoteProcessClient::readGames() {
@@ -387,6 +399,7 @@ void RemoteProcessClient::writeMove(const Move& move) {
     writeDouble(move.getMaxAngularSpeed());
     writeEnum(move.getVehicleType());
     writeLong(move.getFacilityId());
+    writeLong(move.getVehicleId());
 }
 
 void RemoteProcessClient::writeMoves(const vector<Move>& moves) {
@@ -414,8 +427,14 @@ Player RemoteProcessClient::readPlayer() {
     bool strategyCrashed = readBoolean();
     int score = readInt();
     int remainingActionCooldownTicks = readInt();
+    int remainingNuclearStrikeCooldownTicks = readInt();
+    long long nextNuclearStrikeVehicleId = readLong();
+    int nextNuclearStrikeTickIndex = readInt();
+    double nextNuclearStrikeX = readDouble();
+    double nextNuclearStrikeY = readDouble();
 
-    Player player(id, me, strategyCrashed, score, remainingActionCooldownTicks);
+    Player player(id, me, strategyCrashed, score, remainingActionCooldownTicks, remainingNuclearStrikeCooldownTicks,
+        nextNuclearStrikeVehicleId, nextNuclearStrikeTickIndex, nextNuclearStrikeX, nextNuclearStrikeY);
     previousPlayerById[player.getId()] = player;
     return player;
 }
@@ -428,6 +447,11 @@ void RemoteProcessClient::writePlayer(const Player& player) {
     writeBoolean(player.isStrategyCrashed());
     writeInt(player.getScore());
     writeInt(player.getRemainingActionCooldownTicks());
+    writeInt(player.getRemainingNuclearStrikeCooldownTicks());
+    writeLong(player.getNextNuclearStrikeVehicleId());
+    writeInt(player.getNextNuclearStrikeTickIndex());
+    writeDouble(player.getNextNuclearStrikeX());
+    writeDouble(player.getNextNuclearStrikeY());
 }
 
 vector<Player> RemoteProcessClient::readPlayers() {

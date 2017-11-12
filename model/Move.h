@@ -23,6 +23,7 @@ namespace model {
         double maxAngularSpeed;
         VehicleType vehicleType;
         long long facilityId;
+        long long vehicleId;
     public:
         Move();
 
@@ -54,6 +55,8 @@ namespace model {
         void setVehicleType(const VehicleType vehicleType);
         long long getFacilityId() const;
         void setFacilityId(const long long facilityId);
+        long long getVehicleId() const;
+        void setVehicleId(const long long vehicleId);
     };
 }
 

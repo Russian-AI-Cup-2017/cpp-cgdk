@@ -26,7 +26,9 @@ Game::Game()
     fighterGroundAttackRange(-1.0), fighterAerialAttackRange(-1.0), fighterGroundDamage(-1), fighterAerialDamage(-1),
     fighterGroundDefence(-1), fighterAerialDefence(-1), fighterAttackCooldownTicks(-1), fighterProductionCost(-1),
     maxFacilityCapturePoints(-1.0), facilityCapturePointsPerVehiclePerTick(-1.0), facilityWidth(-1.0),
-    facilityHeight(-1.0) { }
+    facilityHeight(-1.0), baseTacticalNuclearStrikeCooldown(-1),
+    tacticalNuclearStrikeCooldownDecreasePerControlCenter(-1), maxTacticalNuclearStrikeDamage(-1.0),
+    tacticalNuclearStrikeRadius(-1.0), tacticalNuclearStrikeDelay(-1) { }
 
 Game::Game(long long randomSeed, int tickCount, double worldWidth, double worldHeight, bool fogOfWarEnabled,
     int victoryScore, int facilityCaptureScore, int vehicleEliminationScore, int actionDetectionInterval,
@@ -51,7 +53,9 @@ Game::Game(long long randomSeed, int tickCount, double worldWidth, double worldH
     double fighterGroundAttackRange, double fighterAerialAttackRange, int fighterGroundDamage, int fighterAerialDamage,
     int fighterGroundDefence, int fighterAerialDefence, int fighterAttackCooldownTicks, int fighterProductionCost,
     double maxFacilityCapturePoints, double facilityCapturePointsPerVehiclePerTick, double facilityWidth,
-    double facilityHeight)
+    double facilityHeight, int baseTacticalNuclearStrikeCooldown,
+    int tacticalNuclearStrikeCooldownDecreasePerControlCenter, double maxTacticalNuclearStrikeDamage,
+    double tacticalNuclearStrikeRadius, int tacticalNuclearStrikeDelay)
     : randomSeed(randomSeed), tickCount(tickCount), worldWidth(worldWidth), worldHeight(worldHeight),
     fogOfWarEnabled(fogOfWarEnabled), victoryScore(victoryScore), facilityCaptureScore(facilityCaptureScore),
     vehicleEliminationScore(vehicleEliminationScore), actionDetectionInterval(actionDetectionInterval),
@@ -91,7 +95,10 @@ Game::Game(long long randomSeed, int tickCount, double worldWidth, double worldH
     fighterAttackCooldownTicks(fighterAttackCooldownTicks), fighterProductionCost(fighterProductionCost),
     maxFacilityCapturePoints(maxFacilityCapturePoints),
     facilityCapturePointsPerVehiclePerTick(facilityCapturePointsPerVehiclePerTick), facilityWidth(facilityWidth),
-    facilityHeight(facilityHeight) { }
+    facilityHeight(facilityHeight), baseTacticalNuclearStrikeCooldown(baseTacticalNuclearStrikeCooldown),
+    tacticalNuclearStrikeCooldownDecreasePerControlCenter(tacticalNuclearStrikeCooldownDecreasePerControlCenter),
+    maxTacticalNuclearStrikeDamage(maxTacticalNuclearStrikeDamage),
+    tacticalNuclearStrikeRadius(tacticalNuclearStrikeRadius), tacticalNuclearStrikeDelay(tacticalNuclearStrikeDelay) { }
 
 long long Game::getRandomSeed() const {
     return randomSeed;
@@ -447,4 +454,24 @@ double Game::getFacilityWidth() const {
 
 double Game::getFacilityHeight() const {
     return facilityHeight;
+}
+
+int Game::getBaseTacticalNuclearStrikeCooldown() const {
+    return baseTacticalNuclearStrikeCooldown;
+}
+
+int Game::getTacticalNuclearStrikeCooldownDecreasePerControlCenter() const {
+    return tacticalNuclearStrikeCooldownDecreasePerControlCenter;
+}
+
+double Game::getMaxTacticalNuclearStrikeDamage() const {
+    return maxTacticalNuclearStrikeDamage;
+}
+
+double Game::getTacticalNuclearStrikeRadius() const {
+    return tacticalNuclearStrikeRadius;
+}
+
+int Game::getTacticalNuclearStrikeDelay() const {
+    return tacticalNuclearStrikeDelay;
 }

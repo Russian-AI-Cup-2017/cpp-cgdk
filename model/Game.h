@@ -95,6 +95,11 @@ namespace model {
         double facilityCapturePointsPerVehiclePerTick;
         double facilityWidth;
         double facilityHeight;
+        int baseTacticalNuclearStrikeCooldown;
+        int tacticalNuclearStrikeCooldownDecreasePerControlCenter;
+        double maxTacticalNuclearStrikeDamage;
+        double tacticalNuclearStrikeRadius;
+        int tacticalNuclearStrikeDelay;
     public:
         Game();
         Game(long long randomSeed, int tickCount, double worldWidth, double worldHeight, bool fogOfWarEnabled,
@@ -122,7 +127,10 @@ namespace model {
                 double fighterAerialAttackRange, int fighterGroundDamage, int fighterAerialDamage,
                 int fighterGroundDefence, int fighterAerialDefence, int fighterAttackCooldownTicks,
                 int fighterProductionCost, double maxFacilityCapturePoints,
-                double facilityCapturePointsPerVehiclePerTick, double facilityWidth, double facilityHeight);
+                double facilityCapturePointsPerVehiclePerTick, double facilityWidth, double facilityHeight,
+                int baseTacticalNuclearStrikeCooldown, int tacticalNuclearStrikeCooldownDecreasePerControlCenter,
+                double maxTacticalNuclearStrikeDamage, double tacticalNuclearStrikeRadius,
+                int tacticalNuclearStrikeDelay);
 
         long long getRandomSeed() const;
         int getTickCount() const;
@@ -213,6 +221,11 @@ namespace model {
         double getFacilityCapturePointsPerVehiclePerTick() const;
         double getFacilityWidth() const;
         double getFacilityHeight() const;
+        int getBaseTacticalNuclearStrikeCooldown() const;
+        int getTacticalNuclearStrikeCooldownDecreasePerControlCenter() const;
+        double getMaxTacticalNuclearStrikeDamage() const;
+        double getTacticalNuclearStrikeRadius() const;
+        int getTacticalNuclearStrikeDelay() const;
     };
 }
 
