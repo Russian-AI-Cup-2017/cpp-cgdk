@@ -1,3 +1,6 @@
+#define _ALLOW_KEYWORD_MACROS
+#define private public
+#define protected public
 #include "RemoteProcessClient.h"
 
 #include <algorithm>
@@ -614,17 +617,71 @@ void RemoteProcessClient::writeVehicles(const vector<Vehicle>& vehicles) {
 }
 
 VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
-    if (!readBoolean()) {
-        exit(20013);
+    #define LIST(ADD)\
+    ADD(bool,ok,$)\
+    ADD(long long,id,$)\
+    ADD(double,x,$)\
+    ADD(double,y,$)\
+    ADD(int,durability,$)\
+    ADD(int,remainingAttackCooldownTicks,$)\
+    ADD(bool,selected,$)
+    //===
+    struct t_tmp{
+      bool trash_bef[8-1];
+      #define F(TYPE,NAME,VALUE)TYPE NAME;
+      LIST(F);
+      #undef F
+      bool groups_size[8-1];
+    };
+    int size=sizeof(t_tmp)-(8-1)*2+4;
+    t_tmp tmp={0};
+
+    //
+    if(bool need_fast_networking=true)
+    {
+      unsigned int offset=0;
+      auto m_pBuffer=(char*)&tmp.ok;
+
+      for(;;)
+      {
+        if(offset>=size)break; 
+        auto receivedByteCount=recv(socket.m_socket,m_pBuffer+offset,size-offset,socket.m_nFlags);
+        if(receivedByteCount<=0)break;
+        offset+=receivedByteCount;
+      }
+    
+      if(offset!=size){
+        exit(10012);
+      }
     }
 
-    long long id = readLong();
-    double x = readDouble();
-    double y = readDouble();
-    int durability = readInt();
-    int remainingAttackCooldownTicks = readInt();
-    bool selected = readBoolean();
-    vector<int> groups = readIntArray();
+    #define F(TYPE,NAME,VALUE)auto&##NAME=tmp.NAME;
+    LIST(F);
+    #undef F
+    #undef LIST
+    
+    if(!ok)exit(20013);
+
+    vector<int> groups;groups.resize(*(int*)&tmp.groups_size);
+
+    if(bool need_fast_networking=true)if(!groups.empty())
+    {
+      int size=groups.size()*4;
+      unsigned int offset=0;
+      auto m_pBuffer=(char*)&groups[0];
+
+      for(;;)
+      {
+        if(offset>=size)break; 
+        auto receivedByteCount=recv(socket.m_socket,m_pBuffer+offset,size-offset,socket.m_nFlags);
+        if(receivedByteCount<=0)break;
+        offset+=receivedByteCount;
+      }
+    
+      if(offset!=size){
+        exit(10012);
+      }
+    }
 
     return VehicleUpdate(id, x, y, durability, remainingAttackCooldownTicks, selected, groups);
 }
