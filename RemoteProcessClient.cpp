@@ -613,6 +613,7 @@ void RemoteProcessClient::writeVehicles(const vector<Vehicle>& vehicles) {
     }
 }
 
+
 VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
     if (!readBoolean()) {
         exit(20013);
@@ -647,6 +648,75 @@ vector<VehicleUpdate> RemoteProcessClient::readVehicleUpdates() {
         exit(20014);
     }
 
+    if (this->isLittleEndianMachine() == LITTLE_ENDIAN_BYTE_ORDER)
+    {
+      struct t_sock:CActiveSocket{
+        void read(char*m_pBuffer,int size)
+        {
+          unsigned int offset=0;
+          for(;;)
+          {
+            if(offset>=size)break; 
+            auto receivedByteCount=recv(m_socket,m_pBuffer+offset,size-offset,m_nFlags);
+            if(receivedByteCount<=0)break;
+            offset+=receivedByteCount;
+          }
+          if(offset!=size){
+            exit(10012);
+          }
+        }
+      };
+
+      struct t_veh_upd:VehicleUpdate{
+        static void read_from_socket(t_sock&sock,t_veh_upd&out)
+        {
+
+          #define LIST(ADD)\
+          ADD(long long,id,$)\
+          ADD(double,x,$)\
+          ADD(double,y,$)\
+          ADD(int,durability,$)\
+          ADD(int,remainingAttackCooldownTicks,$)\
+          ADD(bool,selected,$)
+          //===
+          struct t_tmp{
+            bool noused_but_need_for_align[8-1];
+            bool ok;
+            #define F(TYPE,NAME,VALUE)TYPE NAME;
+            LIST(F);
+            #undef F
+            bool groups_size[8-1];
+          };
+          int size=sizeof(t_tmp)-(8-1)*2+4;
+          t_tmp tmp={0};
+
+          sock.read((char*)&tmp.ok,size);
+
+          #define F(TYPE,NAME,VALUE)out.NAME=tmp.NAME;
+          LIST(F);
+          #undef F
+          #undef LIST
+
+          if(!tmp.ok)exit(20013);
+
+          vector<int>&groups=out.groups;
+      
+          groups.resize(*(int*)&tmp.groups_size);
+
+          if(!groups.empty())
+          {
+            sock.read((char*)&groups[0],groups.size()*4);
+          }
+        }
+      };
+      vector<VehicleUpdate> vehicleUpdates;
+      vehicleUpdates.resize(vehicleUpdateCount);
+
+      for (int vehicleUpdateIndex = 0; vehicleUpdateIndex < vehicleUpdateCount; ++vehicleUpdateIndex) {
+          t_veh_upd::read_from_socket((t_sock&)socket,(t_veh_upd&)vehicleUpdates[vehicleUpdateIndex]);
+      }
+      return vehicleUpdates;
+    }
     vector<VehicleUpdate> vehicleUpdates;
     vehicleUpdates.reserve(vehicleUpdateCount);
 
