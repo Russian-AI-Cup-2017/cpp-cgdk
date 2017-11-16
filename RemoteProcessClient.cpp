@@ -1,6 +1,3 @@
-#define _ALLOW_KEYWORD_MACROS
-#define private public
-#define protected public
 #include "RemoteProcessClient.h"
 
 #include <algorithm>
@@ -617,6 +614,23 @@ void RemoteProcessClient::writeVehicles(const vector<Vehicle>& vehicles) {
 }
 
 VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
+    struct t_sock:CActiveSocket{
+      void read(char*m_pBuffer,int size)
+      {
+        unsigned int offset=0;
+        for(;;)
+        {
+          if(offset>=size)break; 
+          auto receivedByteCount=recv(m_socket,m_pBuffer+offset,size-offset,m_nFlags);
+          if(receivedByteCount<=0)break;
+          offset+=receivedByteCount;
+        }
+        if(offset!=size){
+          exit(10012);
+        }
+      }
+    };
+
     #define LIST(ADD)\
     ADD(bool,ok,$)\
     ADD(long long,id,$)\
@@ -627,7 +641,7 @@ VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
     ADD(bool,selected,$)
     //===
     struct t_tmp{
-      bool trash_bef[8-1];
+      bool noused_but_need_for_align[8-1];
       #define F(TYPE,NAME,VALUE)TYPE NAME;
       LIST(F);
       #undef F
@@ -636,24 +650,8 @@ VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
     int size=sizeof(t_tmp)-(8-1)*2+4;
     t_tmp tmp={0};
 
-    //
-    if(bool need_fast_networking=true)
-    {
-      unsigned int offset=0;
-      auto m_pBuffer=(char*)&tmp.ok;
-
-      for(;;)
-      {
-        if(offset>=size)break; 
-        auto receivedByteCount=recv(socket.m_socket,m_pBuffer+offset,size-offset,socket.m_nFlags);
-        if(receivedByteCount<=0)break;
-        offset+=receivedByteCount;
-      }
-    
-      if(offset!=size){
-        exit(10012);
-      }
-    }
+    auto&sock=(t_sock&)socket;
+    sock.read((char*)&tmp.ok,size);
 
     #define F(TYPE,NAME,VALUE)auto&##NAME=tmp.NAME;
     LIST(F);
@@ -664,23 +662,9 @@ VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
 
     vector<int> groups;groups.resize(*(int*)&tmp.groups_size);
 
-    if(bool need_fast_networking=true)if(!groups.empty())
+    if(!groups.empty())
     {
-      int size=groups.size()*4;
-      unsigned int offset=0;
-      auto m_pBuffer=(char*)&groups[0];
-
-      for(;;)
-      {
-        if(offset>=size)break; 
-        auto receivedByteCount=recv(socket.m_socket,m_pBuffer+offset,size-offset,socket.m_nFlags);
-        if(receivedByteCount<=0)break;
-        offset+=receivedByteCount;
-      }
-    
-      if(offset!=size){
-        exit(10012);
-      }
+      sock.read((char*)&groups[0],groups.size()*4);
     }
 
     return VehicleUpdate(id, x, y, durability, remainingAttackCooldownTicks, selected, groups);
