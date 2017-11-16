@@ -25,8 +25,19 @@ enum MessageType {
     MOVE_MESSAGE
 };
 
+class ReadBuffer {
+public:
+    ReadBuffer(CActiveSocket &socket);
+    std::vector<signed char> read(unsigned int byteCount);
+private:
+    std::vector<signed char> buf;
+    size_t pos;
+    CActiveSocket &socket;
+};
+
 class RemoteProcessClient {
     CActiveSocket socket;
+    ReadBuffer buffer;
     bool cachedBoolFlag;
     bool cachedBoolValue;
 
@@ -100,8 +111,14 @@ class RemoteProcessClient {
     double readDouble();
     void writeDouble(double value);
 
-    signed char readByte();
-    std::vector<signed char> readBytes(unsigned int byteCount);
+    signed char readByte() {
+        std::vector<signed char> res = readBytes(1);
+        return *res.begin();
+    }
+    
+    std::vector<signed char> readBytes(unsigned int byteCount) {
+        return buffer.read(byteCount);
+    }
     void writeByte(signed char value);
     void writeBytes(const std::vector<signed char>& bytes);
 
