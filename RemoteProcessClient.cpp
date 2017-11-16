@@ -614,6 +614,22 @@ void RemoteProcessClient::writeVehicles(const vector<Vehicle>& vehicles) {
 }
 
 VehicleUpdate RemoteProcessClient::readVehicleUpdate() {
+    if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
+      if (!readBoolean()) {
+          exit(20013);
+      }
+
+      long long id = readLong();
+      double x = readDouble();
+      double y = readDouble();
+      int durability = readInt();
+      int remainingAttackCooldownTicks = readInt();
+      bool selected = readBoolean();
+      vector<int> groups = readIntArray();
+
+      return VehicleUpdate(id, x, y, durability, remainingAttackCooldownTicks, selected, groups);
+    }
+
     struct t_sock:CActiveSocket{
       void read(char*m_pBuffer,int size)
       {
