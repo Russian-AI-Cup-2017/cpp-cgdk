@@ -7,7 +7,7 @@
 
 namespace model {
     class VehicleUpdate {
-    private:
+    protected:
         long long id;
         double x;
         double y;
