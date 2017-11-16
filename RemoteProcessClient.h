@@ -28,7 +28,8 @@ enum MessageType {
 class ReadBuffer {
 public:
     ReadBuffer(CActiveSocket &socket);
-    std::vector<signed char> read(unsigned int byteCount);
+    signed char* read(unsigned int byteCount);
+    std::vector<signed char> readToVector(unsigned int byteCount);
 private:
     std::vector<signed char> buf;
     size_t pos;
@@ -112,12 +113,11 @@ class RemoteProcessClient {
     void writeDouble(double value);
 
     signed char readByte() {
-        std::vector<signed char> res = readBytes(1);
-        return *res.begin();
+        return *buffer.read(1);
     }
     
     std::vector<signed char> readBytes(unsigned int byteCount) {
-        return buffer.read(byteCount);
+        return buffer.readToVector(byteCount);
     }
     void writeByte(signed char value);
     void writeBytes(const std::vector<signed char>& bytes);

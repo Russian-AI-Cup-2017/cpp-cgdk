@@ -18,19 +18,19 @@ ReadBuffer::ReadBuffer(CActiveSocket &socket) : socket(socket) {
     pos = 0;
 }
 
-std::vector<signed char> ReadBuffer::read(unsigned int byteCount) {
+signed char* ReadBuffer::read(unsigned int byteCount) {
     if (byteCount > MAX_BUFFER_SIZE)
     {
         /* Invalid MAX_BUFFER_SIZE or byteCount */
         exit(11111);
     }
-        
+    
     int32 receivedByteCount;
     
     do {
         if (buf.size() - pos >= byteCount)
         {
-            std::vector<signed char> result = std::vector<signed char>(buf.data() + pos, buf.data() + pos + byteCount);
+            signed char* result = buf.data() + pos;
             pos += byteCount;
             return result;
         }
@@ -43,6 +43,12 @@ std::vector<signed char> ReadBuffer::read(unsigned int byteCount) {
     } while(receivedByteCount > 0);
     
     exit(10012);
+}
+
+std::vector<signed char> ReadBuffer::readToVector(unsigned int byteCount) {
+    signed char *dataPtr = read(byteCount);
+    std::vector<signed char> result = std::vector<signed char>(dataPtr, dataPtr + byteCount);
+    return result;
 }
 
 RemoteProcessClient::RemoteProcessClient(string host, int port)
@@ -898,14 +904,14 @@ void RemoteProcessClient::writeBoolean(bool value) {
 }
 
 int RemoteProcessClient::readInt() {
-    vector<signed char> bytes = this->readBytes(INTEGER_SIZE_BYTES);
+    signed char *bytes = buffer.read(INTEGER_SIZE_BYTES);
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(bytes, bytes + INTEGER_SIZE_BYTES);
     }
 
     int value;
-    memcpy(&value, &bytes[0], INTEGER_SIZE_BYTES);
+    memcpy(&value, bytes, INTEGER_SIZE_BYTES);
     return value;
 }
 
@@ -981,14 +987,14 @@ void RemoteProcessClient::writeIntArray2D(const vector<vector<int> >& value) {
 }
 
 long long RemoteProcessClient::readLong() {
-    vector<signed char> bytes = this->readBytes(LONG_SIZE_BYTES);
+    signed char *bytes = buffer.read(LONG_SIZE_BYTES);
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(bytes, bytes + LONG_SIZE_BYTES);
     }
 
     long long value;
-    memcpy(&value, &bytes[0], LONG_SIZE_BYTES);
+    memcpy(&value, bytes, LONG_SIZE_BYTES);
     return value;
 }
 
