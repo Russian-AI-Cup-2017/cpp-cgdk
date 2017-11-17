@@ -11,7 +11,7 @@ const bool LITTLE_ENDIAN_BYTE_ORDER = true;
 const int INTEGER_SIZE_BYTES = sizeof(int);
 const int LONG_SIZE_BYTES = sizeof(long long);
 
-constexpr size_t MAX_BUFFER_SIZE = 1024*1024;
+constexpr size_t MAX_BUFFER_SIZE = 1024 * 1024;
 
 ReadBuffer::ReadBuffer(CActiveSocket &socket) : socket(socket) {
     buf.reserve(MAX_BUFFER_SIZE);
@@ -19,8 +19,7 @@ ReadBuffer::ReadBuffer(CActiveSocket &socket) : socket(socket) {
 }
 
 signed char* ReadBuffer::read(unsigned int byteCount) {
-    if (byteCount > MAX_BUFFER_SIZE)
-    {
+    if (byteCount > MAX_BUFFER_SIZE) {
         /* Invalid MAX_BUFFER_SIZE or byteCount */
         exit(11111);
     }
@@ -28,8 +27,7 @@ signed char* ReadBuffer::read(unsigned int byteCount) {
     int32 receivedByteCount;
     
     do {
-        if (buf.size() - pos >= byteCount)
-        {
+        if (buf.size() - pos >= byteCount) {
             signed char* result = buf.data() + pos;
             pos += byteCount;
             return result;
@@ -40,7 +38,7 @@ signed char* ReadBuffer::read(unsigned int byteCount) {
         
         receivedByteCount = socket.Receive(MAX_BUFFER_SIZE - buf.size());
         buf.insert(buf.end(), socket.GetData(), socket.GetData() + receivedByteCount);
-    } while(receivedByteCount > 0);
+    } while (receivedByteCount > 0);
     
     exit(10012);
 }
