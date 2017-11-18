@@ -11,8 +11,46 @@ const bool LITTLE_ENDIAN_BYTE_ORDER = true;
 const int INTEGER_SIZE_BYTES = sizeof(int);
 const int LONG_SIZE_BYTES = sizeof(long long);
 
+constexpr size_t MAX_BUFFER_SIZE = 1024 * 1024;
+
+ReadBuffer::ReadBuffer(CActiveSocket &socket) : socket(socket) {
+    buf.reserve(MAX_BUFFER_SIZE);
+    pos = 0;
+}
+
+signed char* ReadBuffer::read(unsigned int byteCount) {
+    if (byteCount > MAX_BUFFER_SIZE) {
+        /* Invalid MAX_BUFFER_SIZE or byteCount */
+        exit(11111);
+    }
+    
+    int32 receivedByteCount;
+    
+    do {
+        if (buf.size() - pos >= byteCount) {
+            signed char* result = buf.data() + pos;
+            pos += byteCount;
+            return result;
+        }
+        
+        buf.erase(buf.begin(), buf.begin() + pos);
+        pos = 0;
+        
+        receivedByteCount = socket.Receive(MAX_BUFFER_SIZE - buf.size());
+        buf.insert(buf.end(), socket.GetData(), socket.GetData() + receivedByteCount);
+    } while (receivedByteCount > 0);
+    
+    exit(10012);
+}
+
+std::vector<signed char> ReadBuffer::readToVector(unsigned int byteCount) {
+    signed char *dataPtr = read(byteCount);
+    std::vector<signed char> result = std::vector<signed char>(dataPtr, dataPtr + byteCount);
+    return result;
+}
+
 RemoteProcessClient::RemoteProcessClient(string host, int port)
-    : cachedBoolFlag(false), cachedBoolValue(false), previousPlayers(vector<Player> ()),
+    : buffer(socket), cachedBoolFlag(false), cachedBoolValue(false), previousPlayers(vector<Player> ()),
     previousFacilities(vector<Facility> ()), terrainByCellXY(vector<vector<TerrainType> > ()),
     weatherByCellXY(vector<vector<WeatherType> > ()), previousPlayerById(unordered_map<long long, Player> ()),
     previousFacilityById(unordered_map<long long, Facility>()){
@@ -864,14 +902,14 @@ void RemoteProcessClient::writeBoolean(bool value) {
 }
 
 int RemoteProcessClient::readInt() {
-    vector<signed char> bytes = this->readBytes(INTEGER_SIZE_BYTES);
+    signed char *bytes = buffer.read(INTEGER_SIZE_BYTES);
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(bytes, bytes + INTEGER_SIZE_BYTES);
     }
 
     int value;
-    memcpy(&value, &bytes[0], INTEGER_SIZE_BYTES);
+    memcpy(&value, bytes, INTEGER_SIZE_BYTES);
     return value;
 }
 
@@ -947,14 +985,14 @@ void RemoteProcessClient::writeIntArray2D(const vector<vector<int> >& value) {
 }
 
 long long RemoteProcessClient::readLong() {
-    vector<signed char> bytes = this->readBytes(LONG_SIZE_BYTES);
+    signed char *bytes = buffer.read(LONG_SIZE_BYTES);
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(bytes, bytes + LONG_SIZE_BYTES);
     }
 
     long long value;
-    memcpy(&value, &bytes[0], LONG_SIZE_BYTES);
+    memcpy(&value, bytes, LONG_SIZE_BYTES);
     return value;
 }
 
@@ -977,33 +1015,6 @@ double RemoteProcessClient::readDouble() {
 
 void RemoteProcessClient::writeDouble(double value) {
     this->writeLong(*reinterpret_cast<long long*>(&value));
-}
-
-signed char RemoteProcessClient::readByte() {
-    if (socket.Receive(1) != 1) {
-        exit(10021);
-    }
-
-    signed char value;
-    memcpy(&value, socket.GetData(), 1);
-    return value;
-}
-
-vector<signed char> RemoteProcessClient::readBytes(unsigned int byteCount) {
-    vector<signed char> bytes(byteCount);
-    unsigned int offset = 0;
-    int receivedByteCount;
-
-    while (offset < byteCount && (receivedByteCount = socket.Receive(byteCount - offset)) > 0) {
-        memcpy(&bytes[offset], socket.GetData(), receivedByteCount);
-        offset += receivedByteCount;
-    }
-
-    if (offset != byteCount) {
-        exit(10012);
-    }
-
-    return bytes;
 }
 
 void RemoteProcessClient::writeByte(signed char value) {
