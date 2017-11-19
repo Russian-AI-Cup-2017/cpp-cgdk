@@ -63,32 +63,32 @@ RemoteProcessClient::RemoteProcessClient(string host, int port)
 }
 
 void RemoteProcessClient::writeTokenMessage(const string& token) {
-    writeEnum<MessageType>(AUTHENTICATION_TOKEN);
+    writeEnum<MessageType>(MessageType::AUTHENTICATION_TOKEN);
     writeString(token);
 }
 
 void RemoteProcessClient::writeProtocolVersionMessage() {
-    writeEnum<MessageType>(PROTOCOL_VERSION);
+    writeEnum<MessageType>(MessageType::PROTOCOL_VERSION);
     writeInt(3);
 }
 
 void RemoteProcessClient::readTeamSizeMessage() {
-    ensureMessageType(readEnum<MessageType>(), TEAM_SIZE);
+    ensureMessageType(readEnum<MessageType>(), MessageType::TEAM_SIZE);
     readInt();
 }
 
 Game RemoteProcessClient::readGameContextMessage() {
-    ensureMessageType(readEnum<MessageType>(), GAME_CONTEXT);
+    ensureMessageType(readEnum<MessageType>(), MessageType::GAME_CONTEXT);
     return readGame();
 }
 
 shared_ptr<PlayerContext> RemoteProcessClient::readPlayerContextMessage() {
     MessageType messageType = readEnum<MessageType>();
-    if (messageType == GAME_OVER) {
+    if (messageType == MessageType::GAME_OVER) {
         return nullptr;
     }
 
-    ensureMessageType(messageType, PLAYER_CONTEXT);
+    ensureMessageType(messageType, MessageType::PLAYER_CONTEXT);
 
     if (!readBoolean()) {
         return nullptr;
@@ -101,7 +101,7 @@ shared_ptr<PlayerContext> RemoteProcessClient::readPlayerContextMessage() {
 }
 
 void RemoteProcessClient::writeMoveMessage(const Move& move) {
-    writeEnum<MessageType>(MOVE_MESSAGE);
+    writeEnum<MessageType>(MessageType::MOVE);
     writeMove(move);
 }
 

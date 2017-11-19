@@ -14,20 +14,20 @@
 #include "model/PlayerContext.h"
 #include "model/World.h"
 
-enum MessageType {
-    UNKNOWN_MESSAGE,
+enum class MessageType {
+    UNKNOWN,
     GAME_OVER,
     AUTHENTICATION_TOKEN,
     TEAM_SIZE,
     PROTOCOL_VERSION,
     GAME_CONTEXT,
     PLAYER_CONTEXT,
-    MOVE_MESSAGE
+    MOVE
 };
 
 class ReadBuffer {
 public:
-    ReadBuffer(CActiveSocket &socket);
+    explicit ReadBuffer(CActiveSocket &socket);
     signed char* read(unsigned int byteCount);
     std::vector<signed char> readToVector(unsigned int byteCount);
 private:
