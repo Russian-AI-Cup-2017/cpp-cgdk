@@ -31,4 +31,4 @@ for %%i in (csimplesocket\*.cpp) do (
     set FILES=!FILES! %%i
 )
 
-call "%COMPILER_PATH:"=%g++" -std=c++14 -static -fno-optimize-sibling-calls -fno-strict-aliasing -DWIN32 -lm -s -x c++ -Wl,--stack=268435456 -O2 -Wall -Wtype-limits -Wno-unknown-pragmas -o %name%.exe!FILES! -lws2_32 -lwsock32 2>compilation.log
+call "%COMPILER_PATH:"=%g++" -std=c++14 -static -fno-strict-aliasing -DWIN32 -lm -s -x c++ -Wl,--stack=268435456 -O2 -Wall -Wtype-limits -Wno-unknown-pragmas -o %name%.exe!FILES! -lws2_32 -lwsock32 2>compilation.log
