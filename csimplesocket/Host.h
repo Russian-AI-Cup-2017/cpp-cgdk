@@ -61,7 +61,7 @@ extern "C"
   #define __WORDSIZE 32
 #endif
 
-#if defined(_LINUX) || defined(_DARWIN) || defined(__MACH__) || defined(MACH)
+#if defined(__linux__) || defined(_LINUX) || defined(_DARWIN) || defined(__MACH__) || defined(MACH)
     typedef unsigned char  uint8;
     typedef char           int8;
     typedef unsigned short uint16;
@@ -176,7 +176,7 @@ extern "C"
 #define LSEEK(a,b,c)           _lseek(a,b,c)
 #endif
 
-#if defined(_LINUX) || defined(_DARWIN) || defined(__MACH__) || defined(MACH)
+#if defined(__linux__) || defined(_LINUX) || defined(_DARWIN) || defined(__MACH__) || defined(MACH)
 #define ACCEPT(a,b,c)          accept(a,b,c)
 #define CONNECT(a,b,c)         connect(a,b,c)
 #define CLOSE(a)               close(a)

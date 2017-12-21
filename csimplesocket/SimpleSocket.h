@@ -49,7 +49,7 @@
 #include <stdarg.h>
 #include <errno.h>
 
-#if defined(_LINUX) || defined (_DARWIN) || defined(__MACH__) || defined(MACH)
+#if defined(__linux__) || defined(_LINUX) || defined (_DARWIN) || defined(__MACH__) || defined(MACH)
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
@@ -57,14 +57,14 @@
   #include <netinet/ip.h>
   #include <netdb.h>
 #endif
-#ifdef _LINUX
+#if defined(__linux__) || defined(_LINUX)
   #include <linux/if_packet.h>
   #include <linux/if_packet.h>
   #include <linux/if_ether.h>
   #include <linux/if.h>
   #include <sys/sendfile.h>
 #endif
-#if defined(_LINUX) || defined (_DARWIN) || defined(__MACH__) || defined(MACH)
+#if defined(__linux__) || defined(_LINUX) || defined (_DARWIN) || defined(__MACH__) || defined(MACH)
   #include <sys/time.h>
   #include <sys/uio.h>
   #include <unistd.h>   

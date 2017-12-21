@@ -94,7 +94,7 @@ CSimpleSocket::CSimpleSocket(CSocketType nType) :
     //----------------------------------------------------------------------
     case CSimpleSocket::SocketTypeRaw:
     {
-#ifdef _LINUX
+#if defined(__linux__) || defined(_LINUX)
         m_nSocketDomain = AF_PACKET;
         m_nSocketType = CSimpleSocket::SocketTypeRaw;
 #endif
@@ -947,7 +947,7 @@ int32 CSimpleSocket::SendFile(int32 nOutFd, int32 nInFd, off_t *pOffset, int32 n
 //------------------------------------------------------------------------------
 void CSimpleSocket::TranslateSocketError(void)
 {
-#ifdef _LINUX
+#if defined(__linux__) || defined(_LINUX)
     switch (errno)
     {
         case EXIT_SUCCESS:

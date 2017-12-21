@@ -148,7 +148,7 @@ bool CPassiveSocket::Listen(const uint8 *pAddr, int16 nPort, int32 nConnectionBa
     // descriptor to be reused immediately after the socket is closed instead
     // of setting in a TIMED_WAIT state.
     //--------------------------------------------------------------------------
-#ifdef _LINUX
+#if defined(__linux__) || defined(_LINUX)
     SETSOCKOPT(m_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&nReuse, sizeof(int32));
     SETSOCKOPT(m_socket, IPPROTO_TCP, IP_TOS, &nReuse, sizeof(int32));
 #endif

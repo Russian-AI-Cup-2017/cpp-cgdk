@@ -50,7 +50,7 @@
   #include <time.h>
 #endif 
 
-#if defined(_LINUX) || defined(__MACH__) || defined(MACH)
+#if defined(__linux__) || defined(_LINUX) || defined(__MACH__) || defined(MACH)
   #include <stdio.h>
   #include <sys/time.h>
 #endif
