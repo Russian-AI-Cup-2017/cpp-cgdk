@@ -24,9 +24,7 @@ signed char* ReadBuffer::read(unsigned int byteCount) {
         exit(11111);
     }
     
-    int32 receivedByteCount;
-    
-    do {
+    while(1) {
         if (buf.size() - pos >= byteCount) {
             signed char* result = buf.data() + pos;
             pos += byteCount;
@@ -36,11 +34,12 @@ signed char* ReadBuffer::read(unsigned int byteCount) {
         buf.erase(buf.begin(), buf.begin() + pos);
         pos = 0;
         
-        receivedByteCount = socket.Receive(MAX_BUFFER_SIZE - buf.size());
+        int32 receivedByteCount = socket.Receive(MAX_BUFFER_SIZE - buf.size());
+        if (receivedByteCount <= 0)
+            exit(10012);
+
         buf.insert(buf.end(), socket.GetData(), socket.GetData() + receivedByteCount);
-    } while (receivedByteCount > 0);
-    
-    exit(10012);
+    };
 }
 
 std::vector<signed char> ReadBuffer::readToVector(unsigned int byteCount) {
